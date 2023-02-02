@@ -1,5 +1,6 @@
 package com.runners.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.runners.domain.enums.City;
 import com.runners.domain.enums.Gender;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,7 @@ public class Patient {
     private boolean healthInsurance;
 
 
+    @JsonIgnore
     @OneToMany(mappedBy = "patient")
     private List<Appointment> appointmentList = new ArrayList<>();
 

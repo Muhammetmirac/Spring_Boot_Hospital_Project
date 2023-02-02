@@ -65,4 +65,15 @@ public class DoctorService {
         doctorRepository.save(doctor);
 
     }
+
+    public boolean existDoctorById(Long id){
+       boolean exist= doctorRepository.existsById(id);
+        return exist;
+    }
+
+    public Doctor getDoctorById(Long id){
+       return doctorRepository.findById(id).orElseThrow(
+               ()-> new ResourceNotFoundException(id+" id'li Doctor bulunamadı...")
+       );
+    }
 }

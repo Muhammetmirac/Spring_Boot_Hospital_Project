@@ -4,10 +4,7 @@ import com.runners.domain.Patient;
 import com.runners.dto.PatientDto;
 import com.runners.exception.ResourceNotFoundException;
 import com.runners.repository.PatientRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -27,7 +24,7 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public PatientDto getByIdPatient(Long id) {
+    public PatientDto getByIdPatientDto(Long id) {
         Patient patient = patientRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " id nolu Patient(hasta) bulunamadı... "));
         PatientDto patientDto = new PatientDto(patient);
@@ -62,6 +59,19 @@ public class PatientService {
 
         patientRepository.save(patient);
 
+    }
+
+    public boolean existPatientById(Long id){
+      boolean exist = patientRepository.existsById(id);
+        return exist;
+
+    }
+
+    public Patient getByIdPatient(Long id) {
+        Patient patient = patientRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(id + " id nolu Patient(hasta) bulunamadı... "));
+
+        return patient;
     }
 
 }

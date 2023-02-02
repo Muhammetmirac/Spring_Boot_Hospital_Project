@@ -40,7 +40,7 @@ public class PatientController {
 
     @GetMapping("/query")
     public  ResponseEntity<PatientDto> getByIdPatientDto(@RequestParam Long id){
-        PatientDto patientDto = patientService.getByIdPatient(id);
+        PatientDto patientDto = patientService.getByIdPatientDto(id);
         return  ResponseEntity.ok(patientDto);
     }
 
