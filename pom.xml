@@ -11,8 +11,8 @@
 	<groupId>com.runners</groupId>
 	<artifactId>hospital</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>hospital</name>
-	<description>Practice for Spring Boot Project</description>
+	<name>HospitalProject</name>
+	<description>Practise project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

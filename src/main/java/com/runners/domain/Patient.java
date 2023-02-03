@@ -1,15 +1,14 @@
 package com.runners.domain;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.runners.domain.enums.City;
 import com.runners.domain.enums.Gender;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +20,16 @@ import java.util.List;
 @Setter
 public class Patient {
 
+
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
-    @NotBlank(message = "First name cannot be empty or blank !")
-    @Size(min=2,max = 30,message = "First name '${validatedValue}' must be at least min and max characters")
+    @NotNull
+    @NotBlank(message = "First name cannot be white space !")
+    @Size(min = 2, max=20, message = "First name '${validatedValue}' must be between {min} and {max} long !")
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -39,14 +41,27 @@ public class Patient {
     @Enumerated(EnumType.STRING)
     private City city;
 
+
     private String address;
 
     private boolean healthInsurance;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "patient")
     private List<Appointment> appointmentList = new ArrayList<>();
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

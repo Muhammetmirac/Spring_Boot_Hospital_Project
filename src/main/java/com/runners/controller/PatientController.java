@@ -1,8 +1,11 @@
 package com.runners.controller;
 
+
 import com.runners.domain.Patient;
+import com.runners.dto.PatResponse;
 import com.runners.dto.PatientDto;
 import com.runners.service.PatientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,61 +16,73 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("v1/patient")
+@RequestMapping("v1/patient") //http://localhost:8080/v1/patient
 public class PatientController {
 
-    private final PatientService patientService;
-
-    public PatientController(PatientService patientService) {
-        this.patientService = patientService;
-    }
+    @Autowired
+    private PatientService patientService;
 
 
     @PostMapping
-    public ResponseEntity<Map<String,String>> createPatient(@Valid @RequestBody Patient patient){
+    public ResponseEntity<Map<String, String>> createPatient(@Valid @RequestBody Patient patient) {
+
         patientService.createPatient(patient);
-        Map<String,String> map= new HashMap<>();
-        map.put("message", "Patient is created successfully");
-        map.put("status", "true");
-     return new ResponseEntity<>(map,HttpStatus.CREATED);
-    }
 
-    @GetMapping
-    public ResponseEntity<List<Patient>> getAllPatient(){
-        List<Patient> patientList = patientService.getAll();
-        return ResponseEntity.ok(patientList);
-    }
-
-    @GetMapping("/query")
-    public  ResponseEntity<PatientDto> getByIdPatientDto(@RequestParam Long id){
-        PatientDto patientDto = patientService.getByIdPatientDto(id);
-        return  ResponseEntity.ok(patientDto);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deletePatient(@PathVariable("id") Long id){
-        patientService.deleteByIdPatient(id);
-        String message = "Patient is deleted successfully !";
-        return ResponseEntity.ok(message);
-    }
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<String> deletePatient(@PathVariable("id") Long id){
-//        patientService.deleteByIdPatient(id);
-//        String message = " Silme işlemi başarılı";
-//
-//        return ResponseEntity.ok(message);
-//    }
-
-    @PutMapping("/{id}")
-    public  ResponseEntity<Map<String, String>> updatePatient(@PathVariable ("id") Long id,
-                                                              @Valid @RequestBody PatientDto patientDto ){
-        patientService.updatePatient(id,patientDto);
-
-        Map<String,String> map = new HashMap<>();
-        map.put("message", "Doctor is updated successfully");
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "Patient is created successfully.");
         map.put("status", "true");
 
         return new ResponseEntity<>(map, HttpStatus.CREATED);
+
     }
+
+//    @GetMapping
+//    public ResponseEntity<List<Patient>> getAll(){
+//
+//       List<Patient> patientList = patientService.getAll();
+//
+//       return ResponseEntity.ok(patientList);
+//
+//    }
+
+    @GetMapping
+    public ResponseEntity<List<PatResponse>> getAllPat() {
+        List<PatResponse> patResponseList = patientService.getAllPatient();
+        return ResponseEntity.ok(patResponseList);
+
+    }
+
+    @GetMapping("/query")
+    public ResponseEntity<PatientDto> getPatient(@RequestParam("id") Long id) {
+
+        PatientDto patientDto = patientService.findPatient(id);
+
+        return ResponseEntity.ok(patientDto);
+
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deletePatient(@PathVariable("id") Long id) {
+        patientService.deletePatient(id);
+        String message = "Patient is deleted successfully !";
+
+        return ResponseEntity.ok(message);
+
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Map<String, String>> updatePatient(@PathVariable("id") Long id, @Valid @RequestBody PatientDto patientDto) {
+
+        patientService.updatePatient(id, patientDto);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "Patient is updated successfully.");
+        map.put("status", "true");
+
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+
+
+    }
+
 
 }

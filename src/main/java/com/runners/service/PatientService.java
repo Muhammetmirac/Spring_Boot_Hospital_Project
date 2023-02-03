@@ -1,52 +1,80 @@
 package com.runners.service;
 
+
 import com.runners.domain.Patient;
+import com.runners.dto.AppDto;
+import com.runners.dto.PatResponse;
 import com.runners.dto.PatientDto;
 import com.runners.exception.ResourceNotFoundException;
 import com.runners.repository.PatientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PatientService {
-    private final PatientRepository patientRepository;
 
-    public PatientService(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
-    }
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Autowired
+    @Lazy
+    private AppointmentService appointmentService;
+
 
     public void createPatient(Patient patient) {
+
         patientRepository.save(patient);
+
     }
 
     public List<Patient> getAll() {
+
         return patientRepository.findAll();
+
     }
 
-    public PatientDto getByIdPatientDto(Long id) {
+
+    public List<PatResponse> getAllPatient() {
+         List<Patient> patientList = patientRepository.findAll();
+         List<PatResponse> patResponseList = new ArrayList<>();
+
+         for(Patient w: patientList){
+             PatResponse pat = new PatResponse(w);
+             List<AppDto> appDtoList = appointmentService.findAppDtoByPatient(w);
+            pat.setAppointmentList(appDtoList);
+             patResponseList.add(pat);
+         }
+        return patResponseList;
+    }
+
+    public PatientDto findPatient(Long id) {
+
         Patient patient = patientRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(id + " id nolu Patient(hasta) bulunamadı... "));
+                () -> new ResourceNotFoundException("Patient not found by id : " + id));
+
         PatientDto patientDto = new PatientDto(patient);
+
         return patientDto;
+
     }
 
+    public void deletePatient(Long id) {
 
-    public void deleteByIdPatient(Long id) {
-        if(patientRepository.existsById(id)){
+        if (patientRepository.existsById(id)) {
             patientRepository.deleteById(id);
-        } else throw new ResourceNotFoundException("Patient not found by id : "+id);
+        } else throw new ResourceNotFoundException("Patient not found by id : " + id);
+
     }
-//    public void deleteByIdPatient(Long id) {
-//
-//        if (patientRepository.existsById(id)) {
-//            patientRepository.deleteById(id);
-//        } else new ResourceNotFoundException(id + " id nolu Hasta bulunamadı");
-//    }
+
 
     public void updatePatient(Long id, PatientDto patientDto) {
+
         if (!patientRepository.existsById(id)) {
-            new ResourceNotFoundException(id + " id nolu Hasta bulunamadı");
+            throw new ResourceNotFoundException("Patient not found by id : " + id);
         }
         Patient patient = patientRepository.getById(id);
 
@@ -61,17 +89,18 @@ public class PatientService {
 
     }
 
-    public boolean existPatientById(Long id){
-      boolean exist = patientRepository.existsById(id);
-        return exist;
+    public Patient getPatientById(Long id) {
 
+        return patientRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Patient not found by id :" + id));
     }
 
-    public Patient getByIdPatient(Long id) {
-        Patient patient = patientRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(id + " id nolu Patient(hasta) bulunamadı... "));
+    public boolean existByid(Long id) {
 
-        return patient;
+        boolean exists = patientRepository.existsById(id);
+        return exists;
     }
+
+
 
 }

@@ -1,10 +1,11 @@
 package com.runners.controller;
 
+
 import com.runners.domain.Appointment;
+import com.runners.dto.AppDto;
 import com.runners.dto.AppRequest;
-import com.runners.dto.AppointmentDto;
-import com.runners.service.AppoinetmentService;
-import com.runners.service.PatientService;
+import com.runners.service.AppointmentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,53 +13,61 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("v1/appointment")
+@RequestMapping("v1/appointment")       // http://localhost:8080/v1/
 public class AppointmentController {
-    private final AppoinetmentService appoinetmentService;
 
-
-
-
-    public AppointmentController(AppoinetmentService appoinetmentService) {
-        this.appoinetmentService = appoinetmentService;
-
-    }
+    @Autowired
+    private AppointmentService appointmentService;
 
     @PostMapping
-    public ResponseEntity< String> createAppointment(@Valid @RequestBody Appointment appointment){
-        appoinetmentService.createAppointment(appointment);
-        String message = "Hasta Randevu Kaydı Başarılı";
+    public ResponseEntity<String> createAppointment (@Valid @RequestBody Appointment appointment){
+        appointmentService.createAppointment(appointment);
+
+        String message = "Appointment is created successfully.";
+
         return ResponseEntity.ok(message);
 
     }
 
     @GetMapping
-    public ResponseEntity<List<AppointmentDto>> getAllAppointmentDto(){
-      List<AppointmentDto> list =  appoinetmentService.getAllAppointment();
-      return   ResponseEntity.ok(list);
+    public ResponseEntity<List<AppDto>> getAllDto(){
+       List<AppDto> appDtoList = appointmentService.getAllDto();
+
+       return ResponseEntity.ok(appDtoList);
+
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<AppointmentDto> getAppDtoById(@PathVariable("id") Long id){
+    public ResponseEntity<AppDto> getAppDtoById(@PathVariable("id") Long id){
 
-        AppointmentDto appDto = appoinetmentService.findAppDto(id);
-        return ResponseEntity.ok(appDto);
+      AppDto appDto = appointmentService.findAppDto(id);
+      return ResponseEntity.ok(appDto);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateAppointment(@PathVariable Long id,
-                                                            @Valid @RequestBody AppRequest appRequest){
-      appoinetmentService.updateAppointment(id,appRequest);
+    @PutMapping("{id}")
+    public ResponseEntity<String> updateAppointment(@PathVariable("id") Long id, @Valid @RequestBody AppRequest appRequest){
 
-      String message = " Appoinetment kaydı başarılı...";
-        return  ResponseEntity.ok(message);
-    }
+        appointmentService.updateAppointment(id,appRequest);
+        String message = "Appointment is updated successfully. ";
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteAppointment(@PathVariable Long id){
-        appoinetmentService.deleteAppointment(id);
-        String message = "Silme işlemi başarılı...";
         return ResponseEntity.ok(message);
+
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteAppointment(@PathVariable("id") Long id){
+
+        appointmentService.deleteAppointment(id);
+
+        String message = "Appointment is deleted successfully !";
+        return ResponseEntity.ok(message);
+
+    }
+
+
+
+
+
+
 
 }
