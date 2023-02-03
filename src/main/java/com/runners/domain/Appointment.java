@@ -1,5 +1,4 @@
 package com.runners.domain;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,15 +13,11 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long doctorId;
-    private Long patientId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appointment_patient")
-    private Patient patient;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "appointment_doctor")
 
-    private Doctor doctor;
+    private Long doctorId;
+
+    private Long patientId;
+
     @NotBlank
     @NotNull
     private String date;
@@ -34,5 +29,13 @@ public class Appointment {
     private Integer minute;
     private String notes;
 
+
+    @ManyToOne
+    @JoinColumn(name = "appointment_patient")
+    private Patient patient;
+
+    @ManyToOne
+    @JoinColumn(name = "appointment_doctor")
+    private Doctor doctor;
 
 }

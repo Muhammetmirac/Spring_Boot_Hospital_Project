@@ -14,7 +14,7 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@NoArgsConstructor
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -26,7 +26,7 @@ public class PatientDto {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false)
+
     private Integer dateOfBirth;
 
     @Enumerated(EnumType.STRING)

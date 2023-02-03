@@ -17,30 +17,24 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 
-@NoArgsConstructor
+
 @AllArgsConstructor
 @Getter
 @Setter
 public class DoctorDTO {
-
 
     @Size(min = 2, max = 30, message = "First name '${validatedValue}' must be between {min} and {max} long")
     @NotBlank(message = "First name cannot be empty or blank !")
     private String firstName;
 
 
-
     private Prefix prefix;
-
 
     private String tcNo;
 
-
     private Department department;
 
-
     private Integer dateOfGraduate;
-
 
     private Integer dateOfStart;
 

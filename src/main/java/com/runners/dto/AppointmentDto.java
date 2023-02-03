@@ -12,24 +12,22 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+
 public class AppointmentDto {
-    @NotNull
-    @NotBlank
+
     private String date;
 
-    @NotNull
 
     private Integer hour;
 
-
-    @NotNull
     private Integer minute;
-
 
     private String notes;
 
     private String patientName;
+
+    private String departmentName;
+
 
     private String doctorName;
 
@@ -40,6 +38,7 @@ public class AppointmentDto {
         this.hour = appointment.getHour();
         this.minute = appointment.getMinute();
         this.notes = appointment.getNotes();
+        this.departmentName = appointment.getDoctor().getDepartment().name();
     }
 
 }

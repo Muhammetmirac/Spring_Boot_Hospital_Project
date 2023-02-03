@@ -3,10 +3,7 @@ package com.runners.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.runners.domain.enums.Department;
 import com.runners.domain.enums.Prefix;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -22,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Doctor {
-
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

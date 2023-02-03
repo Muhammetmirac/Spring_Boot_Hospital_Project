@@ -8,6 +8,7 @@ import com.runners.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,8 +24,15 @@ public class DoctorService {
         doctorRepository.save(doctor);
     }
 
-    public List<Doctor> getAllDoctor() {
-        return doctorRepository.findAll();
+    public List<DoctorDTO> getAllDoctor() {
+       List<Doctor> doctorList = doctorRepository.findAll();
+       List<DoctorDTO> doctorDTOList = new ArrayList<>();
+        for (Doctor w: doctorList      ) {
+            DoctorDTO doctorDTO = new DoctorDTO(w);
+            doctorDTOList.add(doctorDTO);
+            
+        }
+        return doctorDTOList;
 
     }
 
