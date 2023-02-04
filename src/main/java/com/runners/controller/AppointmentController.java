@@ -7,6 +7,7 @@ import com.runners.dto.AppRequest;
 import com.runners.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +21,7 @@ public class AppointmentController {
     private AppointmentService appointmentService;
 
     @PostMapping
+    @PreAuthorize("hasRole ('PATIENT')")
     public ResponseEntity<String> createAppointment (@Valid @RequestBody Appointment appointment){
         appointmentService.createAppointment(appointment);
 
@@ -30,21 +32,24 @@ public class AppointmentController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole ('ADMIN')")
     public ResponseEntity<List<AppDto>> getAllDto(){
-       List<AppDto> appDtoList = appointmentService.getAllDto();
+        List<AppDto> appDtoList = appointmentService.getAllDto();
 
-       return ResponseEntity.ok(appDtoList);
+        return ResponseEntity.ok(appDtoList);
 
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasRole ('PATIENT') or hasRole('ADMIN')")
     public ResponseEntity<AppDto> getAppDtoById(@PathVariable("id") Long id){
 
-      AppDto appDto = appointmentService.findAppDto(id);
-      return ResponseEntity.ok(appDto);
+        AppDto appDto = appointmentService.findAppDto(id);
+        return ResponseEntity.ok(appDto);
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole ('PATIENT')")
     public ResponseEntity<String> updateAppointment(@PathVariable("id") Long id, @Valid @RequestBody AppRequest appRequest){
 
         appointmentService.updateAppointment(id,appRequest);
@@ -55,6 +60,7 @@ public class AppointmentController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole ('PATIENT')")
     public ResponseEntity<String> deleteAppointment(@PathVariable("id") Long id){
 
         appointmentService.deleteAppointment(id);

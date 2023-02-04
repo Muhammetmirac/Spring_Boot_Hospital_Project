@@ -2,12 +2,14 @@ package com.runners.controller;
 
 
 import com.runners.domain.Patient;
+import com.runners.dto.AppPatDto;
 import com.runners.dto.PatResponse;
 import com.runners.dto.PatientDto;
 import com.runners.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("v1/patient") //http://localhost:8080/v1/patient
+@RequestMapping("v1/patient") //http://localhost:8080/v1/patient/
 public class PatientController {
 
     @Autowired
@@ -24,6 +26,7 @@ public class PatientController {
 
 
     @PostMapping
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<Map<String, String>> createPatient(@Valid @RequestBody Patient patient) {
 
         patientService.createPatient(patient);
@@ -36,16 +39,9 @@ public class PatientController {
 
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<Patient>> getAll(){
-//
-//       List<Patient> patientList = patientService.getAll();
-//
-//       return ResponseEntity.ok(patientList);
-//
-//    }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PatResponse>> getAllPat() {
         List<PatResponse> patResponseList = patientService.getAllPatient();
         return ResponseEntity.ok(patResponseList);
@@ -53,15 +49,17 @@ public class PatientController {
     }
 
     @GetMapping("/query")
-    public ResponseEntity<PatientDto> getPatient(@RequestParam("id") Long id) {
+    @PreAuthorize("hasRole ('PATIENT') or hasRole('ADMIN')")
+    public ResponseEntity<PatResponse> getPatient(@RequestParam("id") Long id) {
 
-        PatientDto patientDto = patientService.findPatient(id);
+        PatResponse patientDto = patientService.findPatient(id);
 
         return ResponseEntity.ok(patientDto);
 
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN')")
     public ResponseEntity<String> deletePatient(@PathVariable("id") Long id) {
         patientService.deletePatient(id);
         String message = "Patient is deleted successfully !";
@@ -71,6 +69,7 @@ public class PatientController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<Map<String, String>> updatePatient(@PathVariable("id") Long id, @Valid @RequestBody PatientDto patientDto) {
 
         patientService.updatePatient(id, patientDto);

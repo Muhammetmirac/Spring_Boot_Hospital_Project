@@ -6,15 +6,19 @@ import com.runners.domain.Doctor;
 import com.runners.domain.Patient;
 import com.runners.dto.AppDocDto;
 import com.runners.dto.AppDto;
+import com.runners.dto.AppPatDto;
 import com.runners.dto.AppRequest;
+import com.runners.exception.ConflictException;
 import com.runners.exception.ResourceNotFoundException;
 import com.runners.repository.AppointmentRepository;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AppointmentService {
@@ -23,9 +27,11 @@ public class AppointmentService {
     private AppointmentRepository appointmentRepository;
 
     @Autowired
+
     private DoctorService doctorService;
 
     @Autowired
+
     private PatientService patientService;
 
 
@@ -33,6 +39,11 @@ public class AppointmentService {
 
         Patient patient = patientService.getPatientById(appointment.getPatientId());
         Doctor doctor = doctorService.getDoctorById(appointment.getDoctorId());
+        for (Appointment w : patient.getAppointmentList()) {
+            if (Objects.equals(w.getDoctorId(), appointment.getDoctorId())) {
+                throw new ConflictException("You cannot get appointment for the same Doctor");
+            }
+        }
 
         appointment.setDoctor(doctor);
         appointment.setPatient(patient);
@@ -52,23 +63,6 @@ public class AppointmentService {
         }
         return appDtoList;
 
-    }
-
-    public List<AppDocDto> findAppDtoByDoctor(Doctor doctor){
-        List<Appointment> appointments = appointmentRepository.findAllByDoctor(doctor);
-        List<AppDocDto> appDtoList = new ArrayList<>();
-        for(Appointment app: appointments){
-            appDtoList.add(new AppDocDto(app));
-        }
-        return appDtoList;
-    }
-    public List<AppDto> findAppDtoByPatient(Patient patient){
-        List<Appointment> appointments = appointmentRepository.findAllByPatient(patient);
-        List<AppDto> appDtoList = new ArrayList<>();
-        for(Appointment app: appointments){
-            appDtoList.add(new AppDto(app));
-        }
-        return appDtoList;
     }
 
     public AppDto findAppDto(Long id) {
@@ -98,8 +92,31 @@ public class AppointmentService {
     }
 
     public void deleteAppointment(Long id) {
-       if( appointmentRepository.existsById(id)){
-           appointmentRepository.deleteById(id);
-       }else throw new ResourceNotFoundException("Appointment not found with id : "+id);
+        if (appointmentRepository.existsById(id)) {
+            appointmentRepository.deleteById(id);
+        } else throw new ResourceNotFoundException("Appointment not found with id : " + id);
+    }
+
+    public List<AppPatDto> findAppDtoByPatient(Patient patient) {
+
+        List<Appointment> list = appointmentRepository.findAllByPatient(patient);
+        List<AppPatDto> appPatDtoList = new ArrayList<>();
+
+        for (Appointment w : list) {
+
+            appPatDtoList.add(new AppPatDto(w));
+        }
+        return appPatDtoList;
+
+    }
+
+    public List<AppDocDto> findAppDtoByDoctor(Doctor doctor) {
+
+        List<Appointment> list = appointmentRepository.findAllByDoctor(doctor);
+        List<AppDocDto> appDocDtoList = new ArrayList<>();
+        for (Appointment w : list) {
+            appDocDtoList.add(new AppDocDto(w));
+        }
+        return appDocDtoList;
     }
 }

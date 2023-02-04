@@ -8,6 +8,7 @@ import com.runners.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,12 +18,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("v1/doctor")
+
 public class DoctorController {
 
     @Autowired
     private DoctorService doctorService;
 
     @PostMapping // http://localhost:8080/v1/doctor
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> createDoctor(@Valid @RequestBody Doctor doctor) {
         doctorService.createDoctor(doctor);
 
@@ -34,14 +37,8 @@ public class DoctorController {
 
     }
 
-//    @GetMapping // http://localhost:8080/v1/doctor
-//    public ResponseEntity<List<Doctor>> getAllDoctor() {
-//        List<Doctor> list = doctorService.getAll();
-//
-//        return ResponseEntity.ok(list);
-//    }
-
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<DocResponse>> getAllDoc(){
 
         List<DocResponse> docResponseList = doctorService.getAllDoc();
@@ -52,15 +49,17 @@ public class DoctorController {
 
 
     @GetMapping("/{id}") // http://localhost:8080/v1/doctor/1
-    public ResponseEntity<DoctorDTO> getDocDTOById(@PathVariable("id") Long id) {
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN')")
+    public ResponseEntity<DocResponse> getDocDTOById(@PathVariable("id") Long id) {
 
-        DoctorDTO dto = doctorService.getByIdDTO(id);
+        DocResponse dto = doctorService.getByIdDTO(id);
 
         return ResponseEntity.ok(dto);
 
     }
 
     @DeleteMapping("/{id}") // http://localhost:8080/v1/doctor/1
+    @PreAuthorize("hasRole ('ADMIN')")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
 
         doctorService.deleteDoc(id);
@@ -73,8 +72,9 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}") // http://localhost:8080/v1/doctor/1
+    @PreAuthorize("hasRole ('ADMIN')")
     public ResponseEntity<Map<String, String>> updateDoctor(@PathVariable("id") Long id,
-                                                           @Valid @RequestBody DoctorDTO doctorDTO){
+                                                            @Valid @RequestBody DoctorDTO doctorDTO){
 
         doctorService.updateDoctor(id,doctorDTO);
         Map<String,String> map = new HashMap<>();
